@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pause : MonoBehaviour
+namespace Alexender.Runer.UI
 {
-   public void pause()
+    public class Pause : MonoBehaviour
     {
-        Time.timeScale = 0f;
+        public void pause()
+        {
+            Time.timeScale = 0f;
+        }
     }
 }

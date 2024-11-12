@@ -2,87 +2,90 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SwipeController : MonoBehaviour
+namespace Alexender.Runer
 {
-    public static bool tap, swipeLeft, swipeRight, swipeUp, swipeDown;
-    private bool isDraging = false;
-    private Vector2 startTouch, swipeDelta;
-
-    private void Update()
+    public class SwipeController : MonoBehaviour
     {
-        tap = swipeDown = swipeUp = swipeLeft = swipeRight = false;
-        #region ПК-версия
-        if (Input.GetMouseButtonDown(0))
-        {
-            tap = true;
-            isDraging = true;
-            startTouch = Input.mousePosition;
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            isDraging = false;
-            Reset();
-        }
-        #endregion
+        public static bool tap, swipeLeft, swipeRight, swipeUp, swipeDown;
+        private bool isDraging = false;
+        private Vector2 startTouch, swipeDelta;
 
-        #region Мобильная версия
-        if (Input.touches.Length > 0)
+        private void Update()
         {
-            if (Input.touches[0].phase == TouchPhase.Began)
+            tap = swipeDown = swipeUp = swipeLeft = swipeRight = false;
+            #region ПК-версия
+            if (Input.GetMouseButtonDown(0))
             {
                 tap = true;
                 isDraging = true;
-                startTouch = Input.touches[0].position;
+                startTouch = Input.mousePosition;
             }
-            else if (Input.touches[0].phase == TouchPhase.Ended || Input.touches[0].phase == TouchPhase.Canceled)
+            else if (Input.GetMouseButtonUp(0))
             {
                 isDraging = false;
                 Reset();
             }
-        }
-        #endregion
+            #endregion
 
-        //Просчитать дистанцию
-        swipeDelta = Vector2.zero;
-        if (isDraging)
-        {
-            if (Input.touches.Length < 0)
-                swipeDelta = Input.touches[0].position - startTouch;
-            else if (Input.GetMouseButton(0))
-                swipeDelta = (Vector2)Input.mousePosition - startTouch;
-        }
-
-        //Проверка на пройденность расстояния
-        if (swipeDelta.magnitude > 100)
-        {
-            //Определение направления
-            float x = swipeDelta.x;
-            float y = swipeDelta.y;
-            if (Mathf.Abs(x) > Mathf.Abs(y))
+            #region Мобильная версия
+            if (Input.touches.Length > 0)
             {
-                
-                if (x < 0)
-                    swipeLeft = true;
-                else
-                    swipeRight = true;
+                if (Input.touches[0].phase == TouchPhase.Began)
+                {
+                    tap = true;
+                    isDraging = true;
+                    startTouch = Input.touches[0].position;
+                }
+                else if (Input.touches[0].phase == TouchPhase.Ended || Input.touches[0].phase == TouchPhase.Canceled)
+                {
+                    isDraging = false;
+                    Reset();
+                }
             }
-            else
+            #endregion
+
+            //Просчитать дистанцию
+            swipeDelta = Vector2.zero;
+            if (isDraging)
             {
-                
-                if (y < 0)
-                    swipeDown = true;
-                else
-                    swipeUp = true;
+                if (Input.touches.Length < 0)
+                    swipeDelta = Input.touches[0].position - startTouch;
+                else if (Input.GetMouseButton(0))
+                    swipeDelta = (Vector2)Input.mousePosition - startTouch;
             }
 
-            Reset();
+            //Проверка на пройденность расстояния
+            if (swipeDelta.magnitude > 100)
+            {
+                //Определение направления
+                float x = swipeDelta.x;
+                float y = swipeDelta.y;
+                if (Mathf.Abs(x) > Mathf.Abs(y))
+                {
+
+                    if (x < 0)
+                        swipeLeft = true;
+                    else
+                        swipeRight = true;
+                }
+                else
+                {
+
+                    if (y < 0)
+                        swipeDown = true;
+                    else
+                        swipeUp = true;
+                }
+
+                Reset();
+            }
+
         }
 
-    }
-
-    private void Reset()
-    {
-        startTouch = swipeDelta = Vector2.zero;
-        isDraging = false;
+        private void Reset()
+        {
+            startTouch = swipeDelta = Vector2.zero;
+            isDraging = false;
+        }
     }
 }

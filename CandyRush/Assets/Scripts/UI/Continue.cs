@@ -4,10 +4,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Continue : MonoBehaviour
+namespace Alexender.Runer.UI
 {
-   public void continuegame()
+    public class Continue : MonoBehaviour
     {
-        Time.timeScale = 1f;
+        public void ContinueGame()
+        {
+            Time.timeScale = 1.0F;
+        }
     }
 }

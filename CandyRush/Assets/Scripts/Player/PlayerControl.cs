@@ -1,148 +1,160 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class PlayerControl : MonoBehaviour
+namespace Alexender.Runer
 {
-    private CharacterController controller;
-    //private Animator anim;
-    private Vector3 dir;
-    [SerializeField] private float speed;
-    [SerializeField] private float jumpForce;
-    [SerializeField] private float fallForce;
-    [SerializeField] private float gravity;
-    [SerializeField] private int candy;
-    [SerializeField] private GameObject losePanel;
-    [SerializeField] private Text candyText;
-    [SerializeField] private Score scoreScript;
-    [SerializeField] public Rigidbody rb;
-
-    private int lineToMove = 1;
-    public float lineDistance = 4; 
-    private float maxSpeed = 110;
-    private float subtraction = 0f;
-    public float weight = 40;
-    public bool canControl = true;
-
-    void Start()
+    public class PlayerControl : MonoBehaviour
     {
-       // anim = GetComponentInChildren<Animator>();
-        controller = GetComponent<CharacterController>();
-        StartCoroutine(SpeedIncrease());
-        Time.timeScale = 1;
-        rb = GetComponent<Rigidbody>();
-    }
+        // Dependencies
+        private Rigidbody rb;
+        private CharacterController controller;
 
-    private void Update()
-    {
-       subtraction += Time.deltaTime;
+        // Movement
+        [SerializeField] private float lineDistance = 4;
 
-        if (subtraction >= 5f)
+        // Physics
+        [SerializeField] private float speed;
+        [SerializeField] private float jumpForce;
+        [SerializeField] private float fallForce;
+        [SerializeField] private float gravity;
+        [SerializeField] private float weight = 40;
+
+        // Parameters
+        [SerializeField] private float maxSpeed = 110;
+
+        // Own field
+        private Vector3 movementDirection;
+        private int currentLine = 1;
+        private float subtraction = 0f;
+
+        public event Action CollidedWithObstacle;
+
+        public PlayerModel Model { get; set; }
+
+        private void Awake()
         {
-            subtraction = 0f;
-            weight *= 0.8f;
+            Model = new PlayerModel();
         }
 
-        if (SwipeController.swipeRight)
+        void Start()
         {
-            if (lineToMove < 2)
-                lineToMove++;
-        }
+            controller = GetComponent<CharacterController>();
+            rb = GetComponent<Rigidbody>();
 
-        if (SwipeController.swipeLeft)
-        {
-            if (lineToMove > 0)
-                lineToMove--;
-        }
-
-        if (SwipeController.swipeUp)
-        {
-            if (controller.isGrounded)
-                Jump();
-        }
-
-       if (SwipeController.swipeDown && !controller.isGrounded)
-        {
-            Fall();
-        }
-
-        //if (controller.isGrounded)
-        //   anim.SetTrigger("isRunning");
-
-        Vector3 targetPosition = transform.position.z * transform.forward + transform.position.y * transform.up;
-        if (lineToMove == 0)
-            targetPosition += Vector3.left * lineDistance;
-        else if (lineToMove == 2)
-            targetPosition += Vector3.right * lineDistance;
-
-        if (transform.position == targetPosition)
-            return;
-        Vector3 diff = targetPosition - transform.position;
-        Vector3 moveDir = diff.normalized * 25 * Time.deltaTime;
-        if (moveDir.sqrMagnitude < diff.sqrMagnitude)
-            controller.Move(moveDir);
-        else
-            controller.Move(diff);
-    }
-
-    private void Jump()
-    {
-        dir.y = jumpForce;
-    }
-
-    private void Fall()
-    {
-        dir.y = -fallForce;
-    }
-
-    private void FixedUpdate()
-    {
-        dir.z = speed;
-        dir.y += gravity * Time.fixedDeltaTime;
-        controller.Move(dir * Time.fixedDeltaTime);
-    }
-
-    private void OnControllerColliderHit(ControllerColliderHit hit)
-    {
-        if (hit.gameObject.tag == "obstacle")
-        {
-            losePanel.SetActive(true);
-            int lastRunScore = int.Parse(scoreScript.scoreText.text.ToString());
-            PlayerPrefs.SetInt("lastRunScore", lastRunScore);
-            Time.timeScale = 0;
-        }
-    }
-
-     private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "Candy")
-        {
-            candy++;
-            candyText.text = candy.ToString();
-            Destroy(other.gameObject);
-            weight += 3;
-        }
-
-        if (weight <= 20)
-        {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            canControl = false; 
-        }
-        else if (weight >= 80)
-        {
-            rb.isKinematic = true;
-            canControl = false;
-        }
-    }
-
-    private IEnumerator SpeedIncrease()
-    {
-        yield return new WaitForSeconds(1);
-        if (speed < maxSpeed)
-        {
-            speed += 1;
             StartCoroutine(SpeedIncrease());
+        }
+
+        private void Update()
+        {
+            subtraction += Time.deltaTime;
+
+            if (subtraction >= 5f)
+            {
+                subtraction = 0f;
+                weight *= 0.8f;
+            }
+
+            if (SwipeController.swipeRight)
+            {
+                if (currentLine < 2)
+                    currentLine++;
+            }
+
+            if (SwipeController.swipeLeft)
+            {
+                if (currentLine > 0)
+                    currentLine--;
+            }
+
+            if (SwipeController.swipeUp)
+            {
+                if (controller.isGrounded)
+                    Jump();
+            }
+
+            if (SwipeController.swipeDown && !controller.isGrounded)
+            {
+                Fall();
+            }
+
+            //if (controller.isGrounded)
+            //   anim.SetTrigger("isRunning");
+
+            Vector3 targetPosition = transform.position.z * transform.forward + transform.position.y * transform.up;
+            if (currentLine == 0)
+                targetPosition += Vector3.left * lineDistance;
+            else if (currentLine == 2)
+                targetPosition += Vector3.right * lineDistance;
+
+            if (transform.position == targetPosition)
+                return;
+            Vector3 diff = targetPosition - transform.position;
+            Vector3 moveDir = 25 * Time.deltaTime * diff.normalized;
+
+            if (moveDir.sqrMagnitude < diff.sqrMagnitude)
+                controller.Move(moveDir);
+            else
+                controller.Move(diff);
+        }
+
+        private void Jump()
+        {
+            movementDirection.y = jumpForce;
+        }
+
+        private void Fall()
+        {
+            movementDirection.y = -fallForce;
+        }
+
+        private void FixedUpdate()
+        {
+            movementDirection.z = speed;
+            movementDirection.y += gravity * Time.fixedDeltaTime;
+            controller.Move(movementDirection * Time.fixedDeltaTime);
+            Model.DistanceScore = transform.position.z / 2.0F;
+        }
+
+        private void OnControllerColliderHit(ControllerColliderHit hit)
+        {
+            if (hit.gameObject.tag == "obstacle")
+            {
+                CollidedWithObstacle?.Invoke();
+                // TODO: need fix
+                //int lastRunScore = int.Parse(scoreScript.scoreText.text.ToString());
+                //PlayerPrefs.SetInt("lastRunScore", lastRunScore);
+                Time.timeScale = 0;
+            }
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.gameObject.tag == "Candy")
+            {
+                Model.CandyCount++;
+                Destroy(other.gameObject);
+                weight += 3;
+            }
+
+            if (weight <= 20)
+            {
+                rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            }
+            else if (weight >= 80)
+            {
+                rb.isKinematic = true;
+            }
+        }
+
+        private IEnumerator SpeedIncrease()
+        {
+            yield return new WaitForSeconds(1);
+            if (speed < maxSpeed)
+            {
+                speed += 1;
+                StartCoroutine(SpeedIncrease());
+            }
         }
     }
 }

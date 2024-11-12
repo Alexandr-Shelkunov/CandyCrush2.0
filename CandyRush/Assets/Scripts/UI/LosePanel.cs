@@ -4,34 +4,37 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class LosePanel : MonoBehaviour
+namespace Alexender.Runer.UI
 {
-    [SerializeField] Text recordText;
-    private void Start()
+    public class LosePanel : MonoBehaviour
     {
-        int lastRunScore = PlayerPrefs.GetInt("lastRunScore");
-        int recordScore = PlayerPrefs.GetInt("recordScore");
-
-        if (lastRunScore > recordScore)
+        [SerializeField] Text recordText;
+        private void Start()
         {
-            recordScore = lastRunScore;
-            PlayerPrefs.SetInt("recordScore", recordScore);
-            recordText.text = recordScore.ToString();
+            int lastRunScore = PlayerPrefs.GetInt("lastRunScore");
+            int recordScore = PlayerPrefs.GetInt("recordScore");
+
+            if (lastRunScore > recordScore)
+            {
+                recordScore = lastRunScore;
+                PlayerPrefs.SetInt("recordScore", recordScore);
+                recordText.text = recordScore.ToString();
+            }
+            else
+            {
+                recordText.text = recordScore.ToString();
+            }
         }
-        else
+
+        public void RestartLevel()
         {
-            recordText.text = recordScore.ToString();
+            SceneManager.LoadScene(1);
         }
-    }
 
-    public void RestartLevel()
-    {
-        SceneManager.LoadScene(1);
-    }
-
-    public void ToMenu()
-    {
-        SceneManager.LoadScene(0);
-        Time.timeScale = 1;
+        public void ToMenu()
+        {
+            SceneManager.LoadScene(0);
+            Time.timeScale = 1;
+        }
     }
 }

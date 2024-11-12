@@ -4,30 +4,33 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class MainMenu : MonoBehaviour
+namespace Alexender.Runer.UI
 {
-    private bool isMuted = false;
-
-    public void startGame()
+    public class MainMenu : MonoBehaviour
     {
-        AudioListener.volume = 1;
-        SceneManager.LoadScene(1);
-        Time.timeScale = 1;
-    }
+        private bool isMuted = false;
 
-    public void Mute()
-    {
-        if (Input.GetKeyDown(KeyCode.M))
+        public void startGame()
         {
-            // Переключение звука по нажатию кнопки M
-            isMuted = !isMuted;
-            if (isMuted)
+            AudioListener.volume = 1;
+            SceneManager.LoadScene(1);
+            Time.timeScale = 1;
+        }
+
+        public void Mute()
+        {
+            if (Input.GetKeyDown(KeyCode.M))
             {
-                AudioListener.volume = 0; // Выключить звук
-            }
-            else
-            {
-                AudioListener.volume = 1; // Включить звук
+                // Переключение звука по нажатию кнопки M
+                isMuted = !isMuted;
+                if (isMuted)
+                {
+                    AudioListener.volume = 0; // Выключить звук
+                }
+                else
+                {
+                    AudioListener.volume = 1; // Включить звук
+                }
             }
         }
     }
