@@ -5,10 +5,6 @@ using UnityEngine;
 
 namespace Alexender.Runer
 {
-    interface IUpdatable
-    {
-        void DoUpdate();
-    }
 
     // TODO: do consistent code style
     public class PlayerController : MonoBehaviour, IUpdatable

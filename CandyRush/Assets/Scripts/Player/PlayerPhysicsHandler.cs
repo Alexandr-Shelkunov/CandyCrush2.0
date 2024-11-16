@@ -1,10 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Alexender.Runer
 
 public class PlayerPhysicsHandler : MonoBehaviour
 {
-    // Зависимости
     private Rigidbody rb;
     private CharacterController controller;
     private PlayerModel playerModel;
@@ -27,43 +28,40 @@ public class PlayerPhysicsHandler : MonoBehaviour
         this.speed = speed;
     }
 
-    // Метод для обработки физики
     public void HandleFixedUpdate(Vector3 movementDirection)
     {
         movementDirection.z = speed;
         movementDirection.y += gravity * Time.fixedDeltaTime;
         controller.Move(movementDirection * Time.fixedDeltaTime);
-        playerModel.DistanceScore = transform.position.z / 2.0F;
+        playerModel.DistanceScore = transform.position.z / 2.0F; // Обновление счета
     }
 
-    // Метод для обработки коллизий с объектами
     public void HandleControllerColliderHit(ControllerColliderHit hit)
     {
-        if (hit.gameObject.tag == "obstacle")
+        if (hit.gameObject.CompareTag("obstacle"))
         {
             CollidedWithObstacle?.Invoke();
-            Time.timeScale = 0;
+            Time.timeScale = 0; // Остановка игры при столкновении
         }
     }
 
-    // Метод для обработки триггеров
     public void HandleTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Candy")
+        if (other.gameObject.CompareTag("Candy"))
         {
             playerModel.CandyCount++;
             Destroy(other.gameObject);
-            // Возможно, это должно быть в другом месте, но оставим здесь
-            playerModel.Weight += 3;
+            playerModel.Weight += 3; // Увеличение веса при сборе конфет
         }
 
+        // Логика для веса игрока
         if (playerModel.Weight <= 20)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
         else if (playerModel.Weight >= 80)
         {
-            rb.isKinematic = true;
+            rb.isKinematic = true; // Блокировка физики для тяжелых объектов
         }
     }
 }
