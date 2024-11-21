@@ -5,7 +5,7 @@ namespace Alexender.Runer
 {
     public class UIController : MonoBehaviour
     {
-        [SerializeField] private PlayerController player;
+        [SerializeField] private Player player;
 
         [SerializeField] private TextMeshProUGUI candyScoreText;
         [SerializeField] private TextMeshProUGUI distanceScoreText;

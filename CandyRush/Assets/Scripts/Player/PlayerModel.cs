@@ -1,11 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace Alexender.Runer
 {
-    public class PlayerModel : MonoBehaviour
+    public class PlayerModel
     {
         public float DistanceScore { get; set; }
         public int CandyCount { get; set; }
@@ -13,16 +8,14 @@ namespace Alexender.Runer
 
         public PlayerModel()
         {
-            // Инициализация значений
+            ResetStats();
+        }
+
+        public void ResetStats()
+        {
             DistanceScore = 0f;
             CandyCount = 0;
             Weight = 40f;
         }
-
-        // Методы для взаимодействия с моделью игрока, если они есть
-        public void ResetStats()
-        {
-            CandyCount = 0;
-            Weight = 40f;
-        }
     }
+}

@@ -4,11 +4,6 @@ using UnityEngine;
 
 namespace Alexender.Runer
 {
-    public interface IUpdatable
-    {
-        void DoUpdate();
-    }
-
     public class LoopController : MonoBehaviour
     {
         private List<IUpdatable> updatables = new List<IUpdatable>();
