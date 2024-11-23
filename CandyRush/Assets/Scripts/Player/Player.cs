@@ -18,9 +18,10 @@ namespace Alexender.Runer
         [SerializeField] private float jumpForce;
         [SerializeField] private float fallForce;
         [SerializeField] private float gravity;
-        [SerializeField] private float maxSpeed;
         [SerializeField] private float lineDistance;
+        [SerializeField] private float maxSpeed;
 
+        // TODO:The event 'Player.CollidedWithObstacle' is never used
         public event Action CollidedWithObstacle;
         public PlayerModel Model { get; set; }
 
@@ -40,19 +41,13 @@ namespace Alexender.Runer
 
         private void Start()
         {
-            StartCoroutine(SpeedIncrease());
 
+            StartCoroutine(SpeedIncrease());
             // Регистрируем playerController в loopController
             if (loopController != null && this != null)
             {
                 loopController.Register(this);
             }
-        }
-
-        // Обновление объекта (DoUpdate) передаем в loopController
-        public void DoUpdate()
-        {
-            playerMovement.DoUpdate();
         }
 
         private IEnumerator SpeedIncrease()
@@ -63,6 +58,13 @@ namespace Alexender.Runer
                 speed += 1;
                 StartCoroutine(SpeedIncrease());
             }
+        }
+
+
+        // Обновление объекта (DoUpdate) передаем в loopController
+        public void DoUpdate()
+        {
+            playerMovement.DoUpdate();
         }
 
         // Обработка FixedUpdate

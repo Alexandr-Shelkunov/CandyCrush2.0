@@ -1,21 +1,24 @@
-using Unity.VisualScripting;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Alexender.Runer
 {
-    public class PlayerMovement : IUpdatable
+    public class PlayerMovement : MonoBehaviour, IUpdatable
     {
         private readonly CharacterController controller;
         private readonly float lineDistance;
         private readonly Transform playerT;
         private readonly float jumpForce;
         private readonly float fallForce;
-        private readonly float speed;
+        private readonly LayerMask groundLayer;
 
         // Собственные поля
         private int currentLine;
         private float fallCoeff;
         private Vector3 velocity;
+        private float speed = 1;
 
         public Vector3 Velocity => velocity;
 
@@ -37,30 +40,46 @@ namespace Alexender.Runer
             fallCoeff = 1.0F;
         }
 
+        private bool IsGrounded()
+        {
+            Vector3 rayOrigin = playerT.position;
+            float rayLength = 1.1f;
+            Debug.DrawRay(rayOrigin, Vector3.down * rayLength, Color.red);
+            if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, rayLength, groundLayer))
+            {
+                float slopeAngle = Vector3.Angle(Vector3.up, hit.normal);
+                return slopeAngle <= 45f; 
+            }
+            return false;
+        }
+
         public void DoUpdate()
         {
             velocity.z = speed;
+            Debug.Log($"Current Speed: {speed}");
 
-            if (!controller.isGrounded)
-            {
-                if (SwipeController.swipeDown)
-                {
-                    fallCoeff = fallForce;
-                }
-            }
-            else
+            if (IsGrounded())
             {
                 fallCoeff = 1.0F;
 
                 if (SwipeController.swipeUp)
                 {
-                    velocity += jumpForce * -Physics.gravity.normalized;
+                   
+                    velocity.y = jumpForce;
+                }
+            }
+            else
+            {
+               
+                if (SwipeController.swipeDown)
+                {
+                    fallCoeff = fallForce; 
                 }
             }
 
-            velocity += fallCoeff * Time.deltaTime * Physics.gravity;
+            velocity.y += fallCoeff * Time.deltaTime * Physics.gravity.y;
+            velocity.y = Mathf.Clamp(velocity.y, -50f, 50f);
 
-            // Управление движением
             if (SwipeController.swipeRight)
             {
                 if (currentLine < 2) currentLine++;
@@ -71,7 +90,6 @@ namespace Alexender.Runer
             }
 
             controller.Move(velocity * Time.deltaTime);
-            Debug.Log(controller.isGrounded);
 
             Vector3 targetPosition = playerT.position.z * playerT.forward + playerT.position.y * playerT.up;
             if (currentLine == 0)
@@ -86,7 +104,7 @@ namespace Alexender.Runer
             if (playerT.position != targetPosition)
             {
                 Vector3 diff = targetPosition - playerT.position;
-                Vector3 moveDir = 25 * Time.deltaTime * diff.normalized;
+                Vector3 moveDir = 50 * Time.deltaTime * diff.normalized;
 
                 if (moveDir.sqrMagnitude < diff.sqrMagnitude)
                 {
