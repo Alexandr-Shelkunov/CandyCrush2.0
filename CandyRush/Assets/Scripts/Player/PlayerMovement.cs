@@ -12,13 +12,13 @@ namespace Alexender.Runer
         private readonly Transform playerT;
         private readonly float jumpForce;
         private readonly float fallForce;
-        private readonly LayerMask groundLayer;
 
         // Собственные поля
         private int currentLine;
         private float fallCoeff;
         private Vector3 velocity;
-        private float speed = 1;
+        private float speed;
+        public LayerMask groundLayer;
 
         public Vector3 Velocity => velocity;
 
@@ -45,6 +45,7 @@ namespace Alexender.Runer
             Vector3 rayOrigin = playerT.position;
             float rayLength = 1.1f;
             Debug.DrawRay(rayOrigin, Vector3.down * rayLength, Color.red);
+
             if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, rayLength, groundLayer))
             {
                 float slopeAngle = Vector3.Angle(Vector3.up, hit.normal);

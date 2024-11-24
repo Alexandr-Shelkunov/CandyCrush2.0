@@ -36,7 +36,7 @@ namespace Alexender.Runer
             Model = new PlayerModel();
 
             physicsHandler = new PlayerPhysicsHandler(controller, Model, transform);
-            playerMovement = new PlayerMovement(controller, lineDistance, transform, jumpForce, fallForce, speed);
+            playerMovement = new PlayerMovement(controller, lineDistance, transform, jumpForce, fallForce, 5f);
         }
 
         private void Start()
