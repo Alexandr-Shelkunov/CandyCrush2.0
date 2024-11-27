@@ -11,18 +11,17 @@ namespace Alexender.Runer
         // Зависимости
         [SerializeField] private LoopController loopController;
         [SerializeField] private Transform sceneRoot;
-        private CharacterController controller;
 
         // Параметры движения
-        [SerializeField] private float speed;
         [SerializeField] private float jumpForce;
         [SerializeField] private float fallForce;
         [SerializeField] private float gravity;
         [SerializeField] private float lineDistance;
         [SerializeField] private float maxSpeed;
 
-        // TODO:The event 'Player.CollidedWithObstacle' is never used
+        // TODO: The event 'Player.CollidedWithObstacle' is never used
         public event Action CollidedWithObstacle;
+
         public PlayerModel Model { get; set; }
 
         // Новый экземпляр обработчика физики
@@ -31,35 +30,20 @@ namespace Alexender.Runer
 
         private void Awake()
         {
-            controller = GetComponent<CharacterController>();
-
             Model = new PlayerModel();
 
-            physicsHandler = new PlayerPhysicsHandler(controller, Model, transform);
-            playerMovement = new PlayerMovement(controller, lineDistance, transform, jumpForce, fallForce, 5f);
+            physicsHandler = new PlayerPhysicsHandler(Model, transform);
+            playerMovement = new PlayerMovement(lineDistance, transform, jumpForce, fallForce, 5f);
         }
 
         private void Start()
         {
-
-            StartCoroutine(SpeedIncrease());
             // Регистрируем playerController в loopController
             if (loopController != null && this != null)
             {
                 loopController.Register(this);
             }
         }
-
-        private IEnumerator SpeedIncrease()
-        {
-            yield return new WaitForSeconds(1);
-            if (speed < maxSpeed)
-            {
-                speed += 1;
-                StartCoroutine(SpeedIncrease());
-            }
-        }
-
 
         // Обновление объекта (DoUpdate) передаем в loopController
         public void DoUpdate()

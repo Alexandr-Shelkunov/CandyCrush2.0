@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3315699548047038345}
   - component: {fileID: 713623049841451843}
   - component: {fileID: 1614439111809890708}
+  - component: {fileID: 3035940812387927160}
   m_Layer: 0
   m_Name: tileSlopeMediumHigh_desert
   m_TagString: Untagged
@@ -26,13 +27,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1362251004530852502}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 1.98, y: -0.11000013, z: -2.497}
   m_LocalScale: {x: 0.1, y: 1.4125, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!33 &3315699548047038345
 MeshFilter:
@@ -93,9 +94,29 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1362251004530852502}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -1165336148641922779, guid: 2f8126ceb21507f4095a8ee4cd26a931, type: 3}
+--- !u!114 &3035940812387927160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1362251004530852502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9c395d87823df545a3153b45df543d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

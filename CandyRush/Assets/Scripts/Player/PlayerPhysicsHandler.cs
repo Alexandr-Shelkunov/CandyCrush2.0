@@ -9,18 +9,15 @@ namespace Alexender.Runer
         private const int CANDY_WEIGHT = 3;
         private const float SCORE_DISTANCE_MOVEMENT_COEFF = 0.5F;
 
-        private readonly CharacterController controller;
         private readonly PlayerModel playerModel;
         private readonly Transform playerT;
 
         public event Action CollidedWithObstacle;
 
         // Инициализация
-        public PlayerPhysicsHandler(CharacterController controller,
-            PlayerModel playerModel,
+        public PlayerPhysicsHandler(PlayerModel playerModel,
             Transform playerT)
         {
-            this.controller = controller;
             this.playerModel = playerModel;
             this.playerT = playerT;
         }
