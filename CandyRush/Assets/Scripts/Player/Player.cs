@@ -17,9 +17,8 @@ namespace Alexender.Runer
         [SerializeField] private float fallForce;
         [SerializeField] private float gravity;
         [SerializeField] private float lineDistance;
-        [SerializeField] private float maxSpeed;
+        [SerializeField] private float speed;
 
-        // TODO: The event 'Player.CollidedWithObstacle' is never used
         public event Action CollidedWithObstacle;
 
         public PlayerModel Model { get; set; }
@@ -33,7 +32,7 @@ namespace Alexender.Runer
             Model = new PlayerModel();
 
             physicsHandler = new PlayerPhysicsHandler(Model, transform);
-            playerMovement = new PlayerMovement(lineDistance, transform, jumpForce, fallForce, 5f);
+            playerMovement = new PlayerMovement(lineDistance, transform, jumpForce, fallForce, speed);
         }
 
         private void Start()
