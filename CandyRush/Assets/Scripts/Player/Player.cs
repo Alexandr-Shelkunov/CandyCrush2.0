@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace Alexender.Runer
 {
-    // TODO: do consistent code style
     public class Player : MonoBehaviour, IUpdatable
     {
         // Зависимости
