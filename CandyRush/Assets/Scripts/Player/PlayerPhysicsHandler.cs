@@ -24,28 +24,40 @@ namespace Alexender.Runer
 
         public void HandleFixedUpdate(Vector3 movementDirection)
         {
-            playerModel.DistanceScore = playerT.position.z * SCORE_DISTANCE_MOVEMENT_COEFF; // Обновление счета
+            playerModel.DistanceScore = playerT.position.z * SCORE_DISTANCE_MOVEMENT_COEFF; 
         }
 
-        public void HandleControllerColliderHit(ControllerColliderHit hit)
+        private void CheckObstacleCollision()
         {
-            if (hit.gameObject.CompareTag("obstacle"))
+            float rayDistance = 1.5f; 
+            Vector3 rayOrigin = playerT.position + Vector3.up * 0.5f; 
+
+            Debug.DrawRay(rayOrigin, Vector3.forward * rayDistance, Color.red);
+
+            if (Physics.Raycast(rayOrigin, Vector3.forward, out RaycastHit hit, rayDistance))
             {
-                CollidedWithObstacle?.Invoke();
-                Time.timeScale = 0; // Остановка игры при столкновении
+                if (hit.collider.CompareTag("obstacle"))
+                {
+                    CollidedWithObstacle?.Invoke();
+                    Time.timeScale = 0; 
+                }
             }
         }
 
-        public void HandleTriggerEnter(Collider other)
+        private void CheckCandyPickup()
         {
-            if (!other.gameObject.CompareTag("Candy"))
-            {
-                return;
-            }
+            float pickupRadius = 1.0f; 
+            Collider[] hitColliders = Physics.OverlapSphere(playerT.position, pickupRadius);
 
-            playerModel.CandyCount++;
-            Object.Destroy(other.gameObject);
-            playerModel.Weight += CANDY_WEIGHT; // Увеличение веса при сборе конфет
+            foreach (var collider in hitColliders)
+            {
+                if (collider.CompareTag("Candy"))
+                {
+                    playerModel.CandyCount++;
+                    Object.Destroy(collider.gameObject);
+                    playerModel.Weight += CANDY_WEIGHT;
+                }
+            }
         }
     }
 }

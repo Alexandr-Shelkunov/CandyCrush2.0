@@ -20,51 +20,69 @@ namespace Alexender.Runer
 
         public event Action CollidedWithObstacle;
 
-        public PlayerModel Model { get; set; }
+        public PlayerModel Model { get; private set; }
 
-        // Новый экземпляр обработчика физики
-        private PlayerPhysicsHandler physicsHandler;
+        // Новый экземпляр класса движения
         private PlayerMovement playerMovement;
 
         private void Awake()
         {
+            // Инициализация модели и движения
             Model = new PlayerModel();
-
-            physicsHandler = new PlayerPhysicsHandler(Model, transform);
             playerMovement = new PlayerMovement(lineDistance, transform, jumpForce, fallForce, speed);
         }
 
         private void Start()
         {
-            // Регистрируем playerController в loopController
-            if (loopController != null && this != null)
+            // Регистрируем Player в LoopController
+            if (loopController != null)
             {
                 loopController.Register(this);
             }
         }
 
-        // Обновление объекта (DoUpdate) передаем в loopController
+        // Обновление объекта (вызов в LoopController)
         public void DoUpdate()
         {
+            // Выполняем движение и логику взаимодействия
             playerMovement.DoUpdate();
+            CheckCandyPickup();
+            CheckObstacleCollision();
         }
 
-        // Обработка FixedUpdate
-        private void FixedUpdate()
+        // Проверка конфет
+        private void CheckCandyPickup()
         {
-            physicsHandler.HandleFixedUpdate(playerMovement.Velocity);
+            float pickupRadius = 1.0f; // Радиус проверки конфет
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, pickupRadius);
+
+            foreach (var collider in hitColliders)
+            {
+                if (collider.CompareTag("Candy"))
+                {
+                    Model.CandyCount++;
+                    Destroy(collider.gameObject);
+                    Model.Weight += 3; // Используем CANDY_WEIGHT из PlayerPhysicsHandler
+                }
+            }
         }
 
-        // Обработка OnControllerColliderHit
-        private void OnControllerColliderHit(ControllerColliderHit hit)
+        // Проверка препятствий
+        private void CheckObstacleCollision()
         {
-            physicsHandler.HandleControllerColliderHit(hit);
-        }
+            float rayDistance = 1.5f; // Дистанция проверки перед игроком
+            Vector3 rayOrigin = transform.position + Vector3.up * 0.5f; // Смещение вверх
 
-        // Обработка OnTriggerEnter
-        private void OnTriggerEnter(Collider other)
-        {
-            physicsHandler.HandleTriggerEnter(other);
+            Debug.DrawRay(rayOrigin, Vector3.forward * rayDistance, Color.red);
+
+            if (Physics.Raycast(rayOrigin, Vector3.forward, out RaycastHit hit, rayDistance))
+            {
+                if (hit.collider.CompareTag("obstacle"))
+                {
+                    CollidedWithObstacle?.Invoke();
+                    Time.timeScale = 0; // Останавливаем игру
+                }
+            }
         }
     }
 }

@@ -88,7 +88,7 @@ namespace Alexender.Runer
 
                 if (isSwipedDown)
                 {
-                    movementVelocity.y += fallForce * Physics.gravity.y * Time.deltaTime;
+                    movementVelocity.y += fallForce * Physics.gravity.y * Time.deltaTime * 5f;
                 }
             }
 
@@ -96,33 +96,6 @@ namespace Alexender.Runer
             HandleLaneChange();
 
             playerT.position += movementVelocity * Time.deltaTime;
-
-            //movementVelocity.x ;
-
-            //Vector3 targetPosition = playerT.position.z * playerT.forward + playerT.position.y * playerT.up;
-            //if (currentLine == 0)
-            //{
-            //    targetPosition += Vector3.left * lineDistance;
-            //}
-            //else if (currentLine == 2)
-            //{
-            //    targetPosition += Vector3.right * lineDistance;
-            //}
-
-            //if (playerT.position != targetPosition)
-            //{
-            //    Vector3 directionFromPlayerToTarget = (targetPosition - playerT.position).normalized;
-            //    Vector3 moveDir = 50 * Time.deltaTime * directionFromPlayerToTarget;
-
-            //    if (moveDir.sqrMagnitude < directionFromPlayerToTarget.sqrMagnitude)
-            //    {
-            //        controller.Move(moveDir);
-            //    }
-            //    else
-            //    {
-            //        controller.Move(directionFromPlayerToTarget);
-            //    }
-            //}
         }
 
         private void HandleLaneChange()
